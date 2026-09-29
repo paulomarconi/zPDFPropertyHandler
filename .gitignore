@@ -1,0 +1,68 @@
+# Ignore all
+/*
+
+# except these files
+!.gitignore
+!.gitattributes
+!README.md
+!LICENSE
+!Makefile
+!CMakeLists.txt
+
+# except this folder
+!.github/
+# ignore this folder again
+.github/*
+# except these subfolders
+!.github/workflows/
+# ignore this folder again
+.github/workflows/*
+# except these files inside
+!.github/workflows/build.yml
+
+
+# except this folder
+!scripts/
+# ignore this folder again
+scripts/*
+# except these files inside
+!scripts/*.cmd
+
+
+# except this folder
+!src/
+# ignore this folder again
+src/*
+# except these subfolders
+!src/core/
+# ignore this folder again
+src/core/*
+# except these files inside
+!src/core/*.cpp
+!src/core/*.h
+
+# except these subfolders
+!src/handler/
+# ignore this folder again
+src/handler/*
+# except these files inside
+!src/handler/*.cpp
+!src/handler/*.h
+!src/handler/*.rc
+!src/handler/*.def
+
+# except these subfolders
+!src/cli/
+# ignore this folder again
+src/cli/*
+# except these files inside
+!src/cli/*.cpp
+
+
+# except this folder
+!tests/
+# ignore this folder again
+tests/*
+# except these files inside
+!tests/*.cpp
+!tests/*.py

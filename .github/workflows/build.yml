@@ -1,0 +1,62 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  mingw:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          path-type: inherit   # keep the setup-python interpreter on PATH
+          install: >-
+            make
+            mingw-w64-x86_64-gcc
+            mingw-w64-i686-gcc
+
+      - name: Install test dependencies
+        run: python -m pip install pikepdf
+
+      - name: Build and test
+        run: make test PYTHON=python
+
+      - name: Build and test x86 DLL
+        run: make test-x86 CXX32=/mingw32/bin/i686-w64-mingw32-g++
+
+      - name: Fuzz (short)
+        run: python tests/fuzz.py 30
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zPDFPropertyHandler
+          path: |
+            build/zPDFPropertyHandler.dll
+            build/x86/zPDFPropertyHandler.dll
+            build/pdfprops.exe
+            scripts/install.cmd
+            scripts/uninstall.cmd
+
+  msvc:
+    runs-on: windows-latest
+    continue-on-error: true   # not yet verified with MSVC locally
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build-msvc -A x64
+      - name: Build
+        run: cmake --build build-msvc --config Release
+      - name: Crypto self-test
+        run: build-msvc\Release\crypto_selftest.exe
